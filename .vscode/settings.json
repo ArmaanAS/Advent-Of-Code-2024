@@ -1,0 +1,10 @@
+{
+  "deno.enable": true,
+  "github.copilot.enable": {
+    "typescript": false
+  },
+  "github.copilot.editor.enableAutoCompletions": false,
+  "[typescript]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  }
+}
