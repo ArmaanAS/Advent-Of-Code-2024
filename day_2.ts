@@ -14,9 +14,9 @@ function isRowUnsafe(row: number[]): [true, number] | false {
   let rowSign = 0;
 
   for (let i = 0; i < row.length - 1; i++) {
-    const difference = row[i] - row[i + 1];
-    const absDiff = Math.abs(difference);
-    const sign = Math.sign(difference);
+    const diff = row[i] - row[i + 1];
+    const absDiff = Math.abs(diff);
+    const sign = Math.sign(diff);
     if ((rowSign !== 0 && sign !== rowSign) || (absDiff < 1 || absDiff > 3)) {
       return [true, i];
     }
@@ -24,6 +24,7 @@ function isRowUnsafe(row: number[]): [true, number] | false {
   }
   return false;
 }
+
 let safe = 0;
 let dampenedSafe = 0;
 for (const row of data) {
@@ -34,15 +35,17 @@ for (const row of data) {
     continue;
   }
 
-  if (!isRowUnsafe(row.slice(1))) {
+  const failedIndex = isUnsafe[1];
+  // Try removing first element which decides ascending / descending
+  if (failedIndex === 1 && !isRowUnsafe(row.slice(1))) {
     dampenedSafe++;
     continue;
   }
+  // Try removing failed index and element after failed index
   const row2 = [...row];
   const row3 = [...row];
-  const indexToRemove = isUnsafe[1];
-  row2.splice(indexToRemove, 1);
-  row3.splice(indexToRemove + 1, 1);
+  row2.splice(failedIndex, 1);
+  row3.splice(failedIndex + 1, 1);
   if (!isRowUnsafe(row2)) {
     dampenedSafe++;
   } else if (!isRowUnsafe(row3)) {
