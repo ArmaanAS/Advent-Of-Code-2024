@@ -65,22 +65,11 @@ console.log({ totalOfMiddlePages });
 
 // Part 2
 let totalOfFixedMiddlePages = 0;
-updates: for (const update of incorrectUpdates) {
+for (const update of incorrectUpdates) {
   const correct = [...update].sort((a, b) =>
     before[a]?.includes(b) ? 1 : before[b]?.includes(a) ? -1 : 0
   );
 
-  for (let i = 0; i < correct.length - 1; i++) {
-    const a = correct[i];
-    for (let j = i + 1; j < correct.length; j++) {
-      const b = correct[j];
-
-      if (before[a]?.includes(b)) {
-        console.log(`${a} should be before ${b}`);
-        continue updates;
-      }
-    }
-  }
   const middle = correct[correct.length / 2 | 0];
   totalOfFixedMiddlePages += middle;
 }
