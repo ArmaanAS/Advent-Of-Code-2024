@@ -12,7 +12,7 @@
 let text = await Deno.readTextFile("./day_6.txt");
 const map = text.split("\n").map((row) =>
   row.split("").map((c) =>
-    c !== "#" ? {} as Record<string, true | undefined> : null
+    c === "#" ? null : {} as Record<string, true | undefined>
   )
 );
 const emptyMap = structuredClone(map);
@@ -39,26 +39,31 @@ let guardDir = initialGuardDir;
 
 // Part 1
 let currentPositionVisitedState = map[guardY][guardX]!;
+// const overlaps = new Set();
 outer: while (true) {
   if (currentPositionVisitedState[`${guardDir}`]) break;
   currentPositionVisitedState[`${guardDir}`] = true;
 
-  for (let i = 0; i < 3; i++) {
-    const nextPos = map[guardY + guardDir[1]]?.[guardX + guardDir[0]];
-    if (nextPos === undefined) break outer;
-    if (nextPos === null) {
-      // console.log("Turn");
-      guardDir = turn(guardDir);
-      continue;
-    }
-    if (nextPos) {
-      // console.log("Forward");
-      guardX = guardX + guardDir[0];
-      guardY = guardY + guardDir[1];
-      currentPositionVisitedState = nextPos;
-      continue outer;
-    }
+  // if (currentPositionVisitedState[`${turn(guardDir)}`]) {
+  //   overlaps.add(`${guardX},${guardY}`);
+  // }
+
+  // for (let i = 0; i < 3; i++) {
+  const nextPos = map[guardY + guardDir[1]]?.[guardX + guardDir[0]];
+  if (nextPos === undefined) break outer;
+  if (nextPos === null) {
+    // console.log("Turn");
+    guardDir = turn(guardDir);
+    continue;
   }
+  if (nextPos) {
+    // console.log("Forward");
+    guardX = guardX + guardDir[0];
+    guardY = guardY + guardDir[1];
+    currentPositionVisitedState = nextPos;
+    continue outer;
+  }
+  // }
 }
 
 let totalVisited = 0;
@@ -70,6 +75,7 @@ for (const row of map) {
 }
 
 console.log({ totalVisited });
+// console.log({ overlaps: overlaps.size });
 
 // Part 2
 function guardGetsStuckInLoop(map: typeof emptyMap): boolean {
@@ -84,22 +90,22 @@ function guardGetsStuckInLoop(map: typeof emptyMap): boolean {
     if (currentPositionVisitedState[`${guardDir}`]) return true;
     currentPositionVisitedState[`${guardDir}`] = true;
 
-    for (let i = 0; i < 3; i++) {
-      const nextPos = map[guardY + guardDir[1]]?.[guardX + guardDir[0]];
-      if (nextPos === undefined) return false;
-      if (nextPos === null) {
-        // console.log("Turn");
-        guardDir = turn(guardDir);
-        continue;
-      }
-      if (nextPos) {
-        // console.log("Forward");
-        guardX = guardX + guardDir[0];
-        guardY = guardY + guardDir[1];
-        currentPositionVisitedState = nextPos;
-        continue outer;
-      }
+    // for (let i = 0; i < 3; i++) {
+    const nextPos = map[guardY + guardDir[1]]?.[guardX + guardDir[0]];
+    if (nextPos === undefined) return false;
+    if (nextPos === null) {
+      // console.log("Turn");
+      guardDir = turn(guardDir);
+      continue;
     }
+    if (nextPos) {
+      // console.log("Forward");
+      guardX = guardX + guardDir[0];
+      guardY = guardY + guardDir[1];
+      currentPositionVisitedState = nextPos;
+      continue outer;
+    }
+    // }
   }
 }
 
@@ -107,26 +113,25 @@ const loops = new Set();
 for (let y = 0; y < height; y++) {
   for (let x = 0; x < width; x++) {
     const pos = map[y][x];
+    if (!pos || Object.keys(pos).length === 0) continue;
 
-    if (pos && Object.keys(pos).length !== 0) {
-      for (const rawDir in pos) {
-        const [dx, dy] = rawDir.split(",").map(Number);
+    for (const rawDir in pos) {
+      const [dx, dy] = rawDir.split(",").map(Number);
 
-        if (!map[y + dy]?.[x + dx]) continue;
+      if (!map[y + dy]?.[x + dx]) continue;
 
-        const mapCopy = structuredClone(emptyMap);
-        mapCopy[y + dy][x + dx] = null;
+      const mapCopy = structuredClone(emptyMap);
+      mapCopy[y + dy][x + dx] = null;
 
-        if (guardGetsStuckInLoop(mapCopy)) {
-          loops.add(`${y + dy},${x + dx}`);
+      if (guardGetsStuckInLoop(mapCopy)) {
+        loops.add(`${y + dy},${x + dx}`);
 
-          const i = (y + dy) * (width + 1) + (x + dx);
-          text = `${text.slice(0, i)}O${text.slice(i + 1)}`;
-        }
+        // const i = (y + dy) * (width + 1) + (x + dx);
+        // text = `${text.slice(0, i)}O${text.slice(i + 1)}`;
       }
     }
   }
 }
 
-console.log(text);
+// console.log(text);
 console.log({ loops: loops.size });
