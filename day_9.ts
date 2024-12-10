@@ -60,10 +60,10 @@ for (let i = 0; i < data.length; i++) {
   }
 }
 
-const fileSysText = fileSystem.flatMap((f) =>
-  new Array(f.size).fill("id" in f ? f.id : ".")
-).join("");
-console.log(fileSysText);
+// const fileSysText = fileSystem.flatMap((f) =>
+//   new Array(f.size).fill("id" in f ? f.id : ".")
+// ).join("");
+// console.log(fileSysText);
 
 for (let i = fileSystem.length - 1; i >= 0; i--) {
   const file = fileSystem[i];
