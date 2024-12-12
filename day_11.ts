@@ -1,5 +1,5 @@
-const text = "125 17";
-// const text = await Deno.readTextFile("./day_11.txt");
+// const text = "125 17";
+const text = await Deno.readTextFile("./day_11.txt");
 
 // Part 1
 let nums = text.split(" ").map(Number);
@@ -30,8 +30,8 @@ console.log(nums.length);
 nums = text.split(" ").map(Number);
 
 const cache = new Map<number, number[]>();
-// const cacheDepth = 16;
-let cacheDepth = 4;
+const cacheDepth = 5;
+// let cacheDepth = 4;
 
 function splitStonesIterative(num: number, depth = 25): number[] {
   if (depth === cacheDepth && cache.has(num)) return cache.get(num)!;
@@ -71,14 +71,18 @@ function recursiveIter(num: number, depth: number) {
   return total;
 }
 
+// for (let i = 1; i < 30; i++) {
 const start = performance.now();
 let totalStones = 0;
 for (const num of nums) {
   // totalStones += splitStonesIterative(num, 25).length;
-  totalStones += recursiveIter(num, 30);
+  // totalStones += recursiveIter(num, i);
+  totalStones += recursiveIter(num, 50);
 }
 console.log(performance.now() - start);
-console.log({ totalStones });
+// console.log(i, totalStones);
+console.log(totalStones);
+// }
 
 // for (; cacheDepth < 25; cacheDepth++) {
 //   cache.clear();
